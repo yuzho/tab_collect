@@ -14,7 +14,7 @@ namespace Service
 
         public IList<Blog> GetBlogsByCategoryId(int categoryId)
         {
-            var blogs = db.Categorys.First(c => c.CategoryId == categoryId).Blogs;
+            var blogs = db.Categorys.FirstOrDefault(c => c.CategoryId == categoryId)?.Blogs;
             if (blogs != null)
                 return blogs.ToList();
             else

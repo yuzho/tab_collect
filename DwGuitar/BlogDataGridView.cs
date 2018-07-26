@@ -14,37 +14,59 @@ namespace DwGuitar
     public partial class BlogDataGridView : UserControl
     {
         private IBlogService _blogService = new BlogService();
-        private int categoryId;
 
         public BlogDataGridView(int categoryId)
         {
             InitializeComponent();
-
-            this.categoryId = categoryId;
-            InitializeDataGridView();
+            InitializeDataGridView(categoryId);
         }
 
-        private void InitializeDataGridView()
+        private void InitializeDataGridView(int categoryId)
         {
             int count = 1; //自增序号
             var blogs = _blogService.GetBlogsByCategoryId(categoryId);
             
-            //dataGridView1.AutoGenerateColumns = false;
-            dataGridView1.DataSource = blogs.Select(b => new {
+            blogGridView.AutoGenerateColumns = false;
+            blogGridView.DataSource = blogs.Select(b => new {
                 Num = count++,
                 Title = b.Title,
-                Tags = b.Tags.Select(t => t.Name)
+                Tags = string.Join(",", b.Tags.Select(t => t.Name))
             }).ToList();
         }
 
-        private void dataGridView1_CellContentDoubleClick(object sender, DataGridViewCellEventArgs e)
+        private void dataGridView1_CellMouseDown(object sender, DataGridViewCellMouseEventArgs e)
         {
-            MessageBox.Show("弹出图片浏览");
+            if (e.Button == MouseButtons.Right)
+            {
+                if (e.RowIndex >= 0)
+                {
+                    blogGridView.ClearSelection();
+                    blogGridView.Rows[e.RowIndex].Selected = true;
+                    blogGridView.CurrentCell = blogGridView.Rows[e.RowIndex].Cells[e.ColumnIndex];
+                }
+            }
         }
 
-        private void dataGridView1_CellContextMenuStripNeeded(object sender, DataGridViewCellContextMenuStripNeededEventArgs e)
+        private void dataGridView1_RowContextMenuStripNeeded(object sender, DataGridViewRowContextMenuStripNeededEventArgs e)
         {
+            string tags = ((dynamic)blogGridView.Rows[e.RowIndex].DataBoundItem).Tags;
+            if (!string.IsNullOrWhiteSpace(tags))
+            {
+                var tagContextMenuStrip = new ContextMenuStrip();
+                tagContextMenuStrip.Items.Add(new ToolStripMenuItem("标签") { Enabled = false });
+                tagContextMenuStrip.Items.Add(new ToolStripSeparator());
+                foreach (var tag in tags.Split(','))
+                {
+                    ToolStripMenuItem item = new ToolStripMenuItem(tag);
+                    tagContextMenuStrip.Items.Add(item);
+                }
+                e.ContextMenuStrip = tagContextMenuStrip;
+            }
+        }
 
+        private void dataGridView1_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
+        {
+            MessageBox.Show("弹出图片浏览");
         }
     }
 }

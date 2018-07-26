@@ -43,7 +43,7 @@ namespace DwGuitar
         {
             categoriesTreeView.Nodes.Clear();
             categories = _categoryService.GetAllCategories();
-            TreeNode root = new TreeNode("全部") { Tag = 0 };
+            TreeNode root = new TreeNode("全部") { Tag = 0};
             root.Expand();
             categoriesTreeView.Nodes.Add(root);
             CreateChildNode(root, 0);
@@ -123,7 +123,6 @@ namespace DwGuitar
                         isExist = true;
                         break;
                     }
-                 
                 }
 
                 if(isExist)
@@ -139,7 +138,6 @@ namespace DwGuitar
                     var tabPage = new TabPage(e.Node.Text);
                     tabPage.Name = e.Node.Text;
                     tabPage.Controls.Add(dataGridView);
-                    
 
                     blogTabControl.TabPages.Add(tabPage);
                     blogTabControl.SelectedTab = tabPage;
