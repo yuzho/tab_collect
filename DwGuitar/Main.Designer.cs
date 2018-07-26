@@ -30,6 +30,7 @@
         {
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.blogTabControl = new System.Windows.Forms.TabControl();
             this.categoriesTreeView = new System.Windows.Forms.TreeView();
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.tagTreeView = new System.Windows.Forms.TreeView();
@@ -48,24 +49,34 @@
             this.tabControl1.Multiline = true;
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(894, 576);
+            this.tabControl1.Size = new System.Drawing.Size(938, 576);
             this.tabControl1.TabIndex = 5;
             // 
             // tabPage1
             // 
+            this.tabPage1.BackColor = System.Drawing.Color.Transparent;
+            this.tabPage1.Controls.Add(this.blogTabControl);
             this.tabPage1.Controls.Add(this.categoriesTreeView);
             this.tabPage1.Location = new System.Drawing.Point(4, 22);
             this.tabPage1.Margin = new System.Windows.Forms.Padding(2);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(2);
-            this.tabPage1.Size = new System.Drawing.Size(886, 550);
+            this.tabPage1.Size = new System.Drawing.Size(930, 550);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "按分类";
-            this.tabPage1.UseVisualStyleBackColor = true;
+            // 
+            // blogTabControl
+            // 
+            this.blogTabControl.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.blogTabControl.Location = new System.Drawing.Point(205, 2);
+            this.blogTabControl.Name = "blogTabControl";
+            this.blogTabControl.SelectedIndex = 0;
+            this.blogTabControl.Size = new System.Drawing.Size(723, 546);
+            this.blogTabControl.TabIndex = 1;
+            this.blogTabControl.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.blogTabControl_MouseDoubleClick);
             // 
             // categoriesTreeView
             // 
-            this.categoriesTreeView.AllowDrop = true;
             this.categoriesTreeView.Dock = System.Windows.Forms.DockStyle.Left;
             this.categoriesTreeView.FullRowSelect = true;
             this.categoriesTreeView.HotTracking = true;
@@ -77,6 +88,10 @@
             this.categoriesTreeView.ShowLines = false;
             this.categoriesTreeView.Size = new System.Drawing.Size(203, 546);
             this.categoriesTreeView.TabIndex = 0;
+            this.categoriesTreeView.BeforeCollapse += new System.Windows.Forms.TreeViewCancelEventHandler(this.categoriesTreeView_BeforeCollapse);
+            this.categoriesTreeView.BeforeExpand += new System.Windows.Forms.TreeViewCancelEventHandler(this.categoriesTreeView_BeforeExpand);
+            this.categoriesTreeView.NodeMouseDoubleClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.categoriesTreeView_NodeMouseDoubleClick);
+            this.categoriesTreeView.MouseDown += new System.Windows.Forms.MouseEventHandler(this.categoriesTreeView_MouseDown);
             // 
             // tabPage2
             // 
@@ -85,7 +100,7 @@
             this.tabPage2.Margin = new System.Windows.Forms.Padding(2);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(2);
-            this.tabPage2.Size = new System.Drawing.Size(803, 389);
+            this.tabPage2.Size = new System.Drawing.Size(930, 550);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "按标签";
             this.tabPage2.UseVisualStyleBackColor = true;
@@ -101,7 +116,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(894, 576);
+            this.ClientSize = new System.Drawing.Size(938, 576);
             this.Controls.Add(this.tabControl1);
             this.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.Name = "Main";
@@ -120,5 +135,6 @@
         private System.Windows.Forms.TreeView categoriesTreeView;
         private System.Windows.Forms.TabPage tabPage2;
         private System.Windows.Forms.TreeView tagTreeView;
+        private System.Windows.Forms.TabControl blogTabControl;
     }
 }

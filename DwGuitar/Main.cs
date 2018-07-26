@@ -8,6 +8,7 @@ using System.Linq;
 using Data;
 using Service;
 using Data.Domain;
+using System.Drawing;
 
 namespace DwGuitar
 {
@@ -15,16 +16,29 @@ namespace DwGuitar
     {
         private ICategoryService _categoryService = new CategoryService();
         private ITagService _tagService = new TagService();
+
         private IList<Category> categories;
+        private int categoryTreeViewMouseClicks = 0;
 
         public Main()
         {
             InitializeComponent();
             InitializeCategoryTree();
-            InitializeTagPanel();
+            //InitializeTagPanel();
         }
 
-        
+
+        public void InitializeTagPanel()
+        {
+            tagTreeView.Nodes.Clear();
+            foreach (var item in _tagService.GetAllTags())
+            {
+                TreeNode tn = new TreeNode(item.Name);
+                tn.Tag = item.TagId;
+                tagTreeView.Nodes.Add(item.Name);
+            }
+        }
+
         public void InitializeCategoryTree()
         {
             categoriesTreeView.Nodes.Clear();
@@ -64,15 +78,78 @@ namespace DwGuitar
             }
         }
 
-        public void InitializeTagPanel()
+        private void categoriesTreeView_MouseDown(object sender, MouseEventArgs e)
         {
-            tagTreeView.Nodes.Clear();
-            foreach (var item in _tagService.GetAllTags())
+            categoryTreeViewMouseClicks = e.Clicks;
+        }
+
+        private void categoriesTreeView_BeforeCollapse(object sender, TreeViewCancelEventArgs e)
+        {
+            if (categoryTreeViewMouseClicks > 1)
             {
-                TreeNode tn = new TreeNode(item.Name);
-                tn.Tag = item.TagId;
-                tagTreeView.Nodes.Add(item.Name);
+                //如果是鼠标双击则禁止结点折叠
+                e.Cancel = true;
             }
+            else
+            {
+                //如果是鼠标单击则允许结点折叠
+                e.Cancel = false;
+            }
+        }
+
+        private void categoriesTreeView_BeforeExpand(object sender, TreeViewCancelEventArgs e)
+        {
+            if (categoryTreeViewMouseClicks > 1)
+            {
+                //如果是鼠标双击则禁止结点展开
+                e.Cancel = true;
+            }
+            else
+            {
+                //如果是鼠标单击则允许结点展开
+                e.Cancel = false;
+            }
+        }
+
+        private void categoriesTreeView_NodeMouseDoubleClick(object sender, TreeNodeMouseClickEventArgs e)
+        {
+            if (e.Button == MouseButtons.Left)
+            {
+                bool isExist = false;
+                foreach(TabPage item in blogTabControl.TabPages)
+                {
+                    if(item.Text == e.Node.Text)
+                    {
+                        isExist = true;
+                        break;
+                    }
+                 
+                }
+
+                if(isExist)
+                {
+                    blogTabControl.SelectTab(e.Node.Text);
+                }
+                else
+                {
+                    int categoryId = Convert.ToInt32(e.Node.Tag);
+                    var dataGridView = new BlogDataGridView(categoryId);
+                    dataGridView.Dock = DockStyle.Fill;
+
+                    var tabPage = new TabPage(e.Node.Text);
+                    tabPage.Name = e.Node.Text;
+                    tabPage.Controls.Add(dataGridView);
+                    
+
+                    blogTabControl.TabPages.Add(tabPage);
+                    blogTabControl.SelectedTab = tabPage;
+                }
+            }
+        }
+
+        private void blogTabControl_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            blogTabControl.TabPages.RemoveAt(blogTabControl.SelectedIndex);
         }
     }
 }
