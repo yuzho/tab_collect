@@ -16,6 +16,7 @@ namespace DwGuitar
     {
         private ICategoryService _categoryService = new CategoryService();
         private ITagService _tagService = new TagService();
+        private BlogService _blogService = new BlogService();
 
         private IList<Category> categories;
         private int categoryTreeViewMouseClicks = 0;
@@ -24,26 +25,14 @@ namespace DwGuitar
         {
             InitializeComponent();
             InitializeCategoryTree();
-            //InitializeTagPanel();
         }
 
 
-        public void InitializeTagPanel()
-        {
-            tagTreeView.Nodes.Clear();
-            foreach (var item in _tagService.GetAllTags())
-            {
-                TreeNode tn = new TreeNode(item.Name);
-                tn.Tag = item.TagId;
-                tagTreeView.Nodes.Add(item.Name);
-            }
-        }
-
-        public void InitializeCategoryTree()
+        private void InitializeCategoryTree()
         {
             categoriesTreeView.Nodes.Clear();
             categories = _categoryService.GetAllCategories();
-            TreeNode root = new TreeNode("全部") { Tag = 0};
+            TreeNode root = new TreeNode("分类") { Tag = 0};
             root.Expand();
             categoriesTreeView.Nodes.Add(root);
             CreateChildNode(root, 0);
@@ -131,10 +120,9 @@ namespace DwGuitar
                 }
                 else
                 {
-                    int categoryId = Convert.ToInt32(e.Node.Tag);
-                    var dataGridView = new BlogDataGridView(categoryId);
-                    dataGridView.Dock = DockStyle.Fill;
-
+                    var blogs = _blogService.GetBlogsByCategoryId(Convert.ToInt32(e.Node.Tag));
+                    var dataGridView = new BlogDataGridView(blogs);
+                    
                     var tabPage = new TabPage(e.Node.Text);
                     tabPage.Name = e.Node.Text;
                     tabPage.Controls.Add(dataGridView);
@@ -148,6 +136,28 @@ namespace DwGuitar
         private void blogTabControl_MouseDoubleClick(object sender, MouseEventArgs e)
         {
             blogTabControl.TabPages.RemoveAt(blogTabControl.SelectedIndex);
+        }
+
+        private void textBox1_KeyDown(object sender, KeyEventArgs e)
+        {
+            if(e.KeyCode == Keys.Enter)
+            {
+                if(string.IsNullOrWhiteSpace(textBox1.Text))
+                {
+                    toolTip1.Show("搜索内容不能为空", textBox1);
+                }
+
+                var searchText = textBox1.Text.Trim();
+                var blogs = _blogService.GetBlogsBySearchText(searchText);
+                var dataGridView = new BlogDataGridView(blogs);
+
+                var tabPage = new TabPage(searchText);
+                tabPage.Name = searchText;
+                tabPage.Controls.Add(dataGridView);
+
+                blogTabControl.TabPages.Add(tabPage);
+                blogTabControl.SelectedTab = tabPage;
+            }
         }
     }
 }

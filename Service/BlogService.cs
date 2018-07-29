@@ -20,5 +20,14 @@ namespace Service
             else
                 return new List<Blog>();
         }
+
+        public IList<Blog> GetBlogsBySearchText(string searchText)
+        {
+            //检索标题
+            return (from b in db.Blogs
+                    where b.Title.Contains(searchText)
+                    select b).ToList();
+
+         }
     }
 }

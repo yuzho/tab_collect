@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Service;
+using Data.Domain;
 
 namespace DwGuitar
 {
@@ -15,17 +16,16 @@ namespace DwGuitar
     {
         private IBlogService _blogService = new BlogService();
 
-        public BlogDataGridView(int categoryId)
+        public BlogDataGridView(IList<Blog> blogs)
         {
             InitializeComponent();
-            InitializeDataGridView(categoryId);
+            Dock = DockStyle.Fill;
+            InitializeDataGridView(blogs);
         }
 
-        private void InitializeDataGridView(int categoryId)
+        private void InitializeDataGridView(IList<Blog> blogs)
         {
             int count = 1; //自增序号
-            var blogs = _blogService.GetBlogsByCategoryId(categoryId);
-            
             blogGridView.AutoGenerateColumns = false;
             blogGridView.DataSource = blogs.Select(b => new {
                 Num = count++,
@@ -50,19 +50,20 @@ namespace DwGuitar
 
         private void dataGridView1_RowContextMenuStripNeeded(object sender, DataGridViewRowContextMenuStripNeededEventArgs e)
         {
-            string tags = ((dynamic)blogGridView.Rows[e.RowIndex].DataBoundItem).Tags;
-            if (!string.IsNullOrWhiteSpace(tags))
-            {
-                var tagContextMenuStrip = new ContextMenuStrip();
-                tagContextMenuStrip.Items.Add(new ToolStripMenuItem("标签") { Enabled = false });
-                tagContextMenuStrip.Items.Add(new ToolStripSeparator());
-                foreach (var tag in tags.Split(','))
-                {
-                    ToolStripMenuItem item = new ToolStripMenuItem(tag);
-                    tagContextMenuStrip.Items.Add(item);
-                }
-                e.ContextMenuStrip = tagContextMenuStrip;
-            }
+            //string tags = ((dynamic)blogGridView.Rows[e.RowIndex].DataBoundItem).Tags;
+            //if (!string.IsNullOrWhiteSpace(tags))
+            //{
+            //    var tagContextMenuStrip = new ContextMenuStrip();
+            //    tagContextMenuStrip.Items.Add(new ToolStripMenuItem("标签") { Enabled = false });
+            //    tagContextMenuStrip.Items.Add(new ToolStripSeparator());
+            //    foreach (var tag in tags.Split(','))
+            //    {
+            //        ToolStripMenuItem item = new ToolStripMenuItem(tag);
+            //        tagContextMenuStrip.Items.Add(item);
+            //    }
+               
+            //    e.ContextMenuStrip = tagContextMenuStrip;
+            //}
         }
 
         private void dataGridView1_CellDoubleClick(object sender, DataGridViewCellEventArgs e)

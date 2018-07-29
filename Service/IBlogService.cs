@@ -10,5 +10,7 @@ namespace Service
     public interface IBlogService
     {
         IList<Blog> GetBlogsByCategoryId(int categoryId);
+
+        IList<Blog> GetBlogsBySearchText(string searchText);
     }
 }
