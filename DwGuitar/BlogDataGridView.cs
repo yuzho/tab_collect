@@ -30,6 +30,7 @@ namespace DwGuitar
             blogGridView.DataSource = blogs.Select(b => new {
                 Num = count++,
                 Title = b.Title,
+                Code = b.Code,
                 Tags = string.Join(",", b.Tags.Select(t => t.Name))
             }).ToList();
         }
@@ -66,7 +67,9 @@ namespace DwGuitar
 
         private void dataGridView1_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
-            MessageBox.Show("弹出图片浏览");
+            string blogCode = ((dynamic)blogGridView.Rows[e.RowIndex].DataBoundItem).Code;
+            string title = ((dynamic)blogGridView.Rows[e.RowIndex].DataBoundItem).Title;
+            new TabPictureView(blogCode, title).Show();
         }
     }
 }

@@ -8,7 +8,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Text;
-using Autofac;
 using Newtonsoft.Json;
 using Service;
 
